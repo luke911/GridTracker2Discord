@@ -1,24 +1,51 @@
+
 # QSO to Discord
-A simple Dockerized solution to post QSO data from GridTracker to Discord using a webhook.
+
+A Dockerized application for posting QSO data (e.g., call sign, grid, frequency) from GridTracker to a Discord channel using webhooks.
 
 ## Features
-- Monitors GridTracker's UDP broadcasts or log files.
-- Posts QSO details (e.g., call sign, grid, time, frequency) to a Discord channel.
 
-## Setup Instructions
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/qso-to-discord.git
-   ```
-2. Build the Docker container:
-   ```
-   docker build -t qso-to-discord .
-   ```
-3. Run the container:
-   ```
-   docker run -d --name qso-to-discord      -e DISCORD_WEBHOOK_URL="your_discord_webhook_url"      qso-to-discord
-   ```
+- Monitors GridTracker's UDP broadcasts.
+- Posts QSO details to Discord.
+- Easy setup with Docker Compose and `.env` support.
+- Logs for debugging and monitoring.
 
-## Requirements
-- Docker
-- GridTracker configured to send UDP broadcasts or write log files.
+## Quick Start
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/qso-to-discord.git
+cd qso-to-discord
+```
+
+### 2. Configure the Application
+
+Copy the `.env.example` file and edit it with your settings:
+
+```bash
+cp .env.example .env
+nano .env
+```
+
+### 3. Run the Application
+
+Use Docker Compose to build and start the container:
+
+```bash
+docker-compose up -d
+```
+
+### 4. Check Logs
+
+```bash
+docker logs qso-to-discord
+```
+
+## Contributing
+
+Contributions are welcome! Please submit issues and pull requests via GitHub.
+
+## License
+
+MIT

@@ -1,0 +1,11 @@
+
+version: "3.8"
+services:
+  qso-to-discord:
+    build: .
+    container_name: qso-to-discord
+    environment:
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+      - UDP_PORT=${UDP_PORT}
+    ports:
+      - "${UDP_PORT}:${UDP_PORT}/udp"
