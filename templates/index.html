@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QSO to Discord Configuration</title>
+</head>
+<body>
+    <h1>QSO to Discord Configuration</h1>
+    <form id="configForm">
+        <label for="webhook">Discord Webhook URL:</label><br>
+        <input type="text" id="webhook" name="webhook" value="{{ webhook }}" required><br><br>
+        <label for="port">UDP Port:</label><br>
+        <input type="text" id="port" name="port" value="{{ port }}" required><br><br>
+        <button type="button" onclick="updateConfig()">Update Configuration</button>
+    </form>
+
+    <p id="message"></p>
+
+    <script>
+        function updateConfig() {
+            const webhook = document.getElementById("webhook").value;
+            const port = document.getElementById("port").value;
+            fetch('/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ webhook, port })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("message").innerText = data.message;
+            })
+            .catch(error => {
+                document.getElementById("message").innerText = "Error updating configuration.";
+            });
+        }
+    </script>
+</body>
+</html>

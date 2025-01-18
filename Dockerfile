@@ -7,6 +7,8 @@ WORKDIR /app
 
 # Copy the application files
 COPY qso_to_discord.py .
+COPY app.py .
+COPY templates ./templates
 COPY requirements.txt .
 
 # Install dependencies
@@ -17,5 +19,8 @@ ENV UDP_IP=0.0.0.0
 ENV UDP_PORT=2237
 ENV DISCORD_WEBHOOK_URL=
 
-# Run the application
-CMD ["python", "qso_to_discord.py"]
+# Expose the Flask port
+EXPOSE 5000
+
+# Run the Flask app
+CMD ["python", "app.py"]
