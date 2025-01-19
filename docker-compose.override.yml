@@ -1,5 +1,5 @@
 services:
-  qso-to-discord:
+  gridtracker-to-discord:
     labels:
       net.unraid.docker.managed: 'composeman'
       net.unraid.docker.icon: ''
