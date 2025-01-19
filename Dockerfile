@@ -1,3 +1,4 @@
+
 # Use a lightweight Python base image
 FROM python:3.9-slim
 
@@ -12,7 +13,7 @@ COPY requirements.txt .
 # Upgrade pip to the latest version
 RUN pip install --upgrade pip
 
-# Install all dependencies
+# Install dependencies
 RUN pip install -r requirements.txt
 
 # Set environment variables (can be overridden)

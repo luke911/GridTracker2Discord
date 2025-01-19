@@ -1,74 +1,33 @@
-import subprocess
-import sys
-
-# Check required packages
-required_packages = ["requests", "python-dotenv", "flask", "flask-socketio", "gunicorn", "eventlet"]
-for package in required_packages:
-    try:
-        __import__(package)
-    except ImportError:
-        print(f"Error: Missing package {package}. Installing...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
 from flask import Flask, request, jsonify, render_template
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 import os
-import logging
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "secret!"
-
-# Initialize SocketIO for real-time updates
 socketio = SocketIO(app)
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-# Store the last 10 contacts in memory
 last_10_contacts = []
 
 @app.route("/")
 def index():
-    return render_template("index.html", webhook=os.getenv("DISCORD_WEBHOOK_URL", ""), port=os.getenv("UDP_PORT", "2237"), contacts=last_10_contacts)
+    return render_template("index.html")
 
 @app.route("/update", methods=["POST"])
 def update_config():
-    try:
-        data = request.json
-        webhook = data.get("webhook", "").strip()
-        port = data.get("port", "2237").strip()
-
-        # Save to .env file
-        with open(".env", "w") as f:
-            f.write(f"DISCORD_WEBHOOK_URL={webhook}\n")
-            f.write(f"UDP_PORT={port}\n")
-
-        return jsonify({"status": "success", "message": "Configuration updated. Restart the container for changes to take effect."}), 200
-    except Exception as e:
-        logging.error(f"Error updating configuration: {e}")
-        return jsonify({"status": "error", "message": "Failed to update configuration."}), 500
-
-# API endpoint to simulate adding a contact (for testing purposes)
-@app.route("/add_contact", methods=["POST"])
-def add_contact():
     data = request.json
-    contact = {
-        "call_sign": data.get("call_sign", "Unknown"),
-        "grid": data.get("grid", "Unknown"),
-        "time": data.get("time", "Unknown"),
-        "frequency": data.get("frequency", "Unknown"),
-    }
-    add_contact_to_log(contact)
-    return jsonify({"status": "success", "contact": contact}), 200
+    webhook = data.get("webhook", "")
+    port = data.get("port", "2237")
+    with open(".env", "w") as f:
+        f.write(f"DISCORD_WEBHOOK_URL={webhook}\nUDP_PORT={port}\n")
+    return jsonify({"message": "Configuration updated successfully!"})
 
-def add_contact_to_log(contact):
-    # Add a contact to the in-memory log and emit it to the WebSocket.
+@socketio.on("new_contact")
+def handle_new_contact(contact):
     if len(last_10_contacts) >= 10:
-        last_10_contacts.pop(0)  # Remove the oldest contact
+        last_10_contacts.pop(0)
     last_10_contacts.append(contact)
     socketio.emit("new_contact", contact)
 

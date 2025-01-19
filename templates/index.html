@@ -4,37 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QSO to Discord Configuration</title>
+    <title>GridTracker to Discord Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #map { height: 400px; }
+    </style>
 </head>
 <body>
-    <h1>QSO to Discord Configuration</h1>
-    <form id="configForm">
-        <label for="webhook">Discord Webhook URL:</label><br>
-        <input type="text" id="webhook" name="webhook" value="{{ webhook }}" required><br><br>
-        <label for="port">UDP Port:</label><br>
-        <input type="text" id="port" name="port" value="{{ port }}" required><br><br>
-        <button type="button" onclick="updateConfig()">Update Configuration</button>
-    </form>
-
-    <p id="message"></p>
-
-    <script>
-        function updateConfig() {
-            const webhook = document.getElementById("webhook").value;
-            const port = document.getElementById("port").value;
-            fetch('/update', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ webhook, port })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("message").innerText = data.message;
-            })
-            .catch(error => {
-                document.getElementById("message").innerText = "Error updating configuration.";
-            });
-        }
-    </script>
+    <header class="bg-primary text-white text-center py-3">
+        <h1>GridTracker to Discord Dashboard</h1>
+        <p>Status: <span id="status" class="badge bg-success">Connected</span></p>
+    </header>
+    <div class="container my-4">
+        <div class="row">
+            <div class="col-md-4">
+                <form id="configForm">
+                    <div class="mb-3"><label for="webhook">Discord Webhook URL</label><input type="text" id="webhook" class="form-control"></div>
+                    <div class="mb-3"><label for="port">UDP Port</label><input type="number" id="port" class="form-control"></div>
+                    <button type="button" onclick="updateConfig()">Update</button>
+                </form>
+            </div>
+            <div class="col-md-8" id="contactsGrid"></div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-6"><canvas id="bandChart"></canvas></div>
+            <div class="col-md-6"><div id="map"></div></div>
+        </div>
+    </div>
 </body>
 </html>

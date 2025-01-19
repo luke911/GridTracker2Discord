@@ -1,12 +1,15 @@
-version: "3.8"
+
 services:
-  qso-to-discord:
+  gridtracker-to-discord:
     build: .
-    container_name: GridTracker2Discord
+    container_name: gridtracker-to-discord
+    ports:
+      - "5000:5000"
+      - "2237:2237/udp"
+    volumes:
+      - ./templates:/app/templates
+      - ./.env:/app/.env
     environment:
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
       - UDP_PORT=${UDP_PORT}
-    ports:
-      - "5000:5000"
-      - "${UDP_PORT}:${UDP_PORT}/udp"
     restart: unless-stopped
