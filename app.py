@@ -1,3 +1,14 @@
+import subprocess
+import sys
+
+# Check required packages
+required_packages = ["requests", "python-dotenv", "flask", "flask-socketio", "gunicorn", "eventlet"]
+for package in required_packages:
+    try:
+        __import__(package)
+    except ImportError:
+        print(f"Error: Missing package {package}. Installing...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
 from flask import Flask, request, jsonify, render_template
 from flask_socketio import SocketIO, emit

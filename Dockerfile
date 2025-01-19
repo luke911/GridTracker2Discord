@@ -1,4 +1,3 @@
-
 # Use a lightweight Python base image
 FROM python:3.9-slim
 
@@ -6,12 +5,14 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the application files
-COPY qso_to_discord.py .
 COPY app.py .
 COPY templates ./templates
 COPY requirements.txt .
 
-# Install dependencies
+# Upgrade pip to the latest version
+RUN pip install --upgrade pip
+
+# Install all dependencies
 RUN pip install -r requirements.txt
 
 # Set environment variables (can be overridden)
@@ -22,5 +23,5 @@ ENV DISCORD_WEBHOOK_URL=
 # Expose the Flask port
 EXPOSE 5000
 
-# Run the Flask app
-CMD ["python", "app.py"]
+# Run the Flask app with Gunicorn and eventlet
+CMD ["gunicorn", "-k", "eventlet", "-w", "1", "-b", "0.0.0.0:5000", "app:app"]
